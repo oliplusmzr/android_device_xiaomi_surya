@@ -1,0 +1,89 @@
+# Copyright 2017-2023 The Android Open Source Project
+# Copyright 2023 The Team Win LLC
+# SPDX-License-Identifier: BSD-3-Clause
+
+on fs
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    chmod 0660 /dev/qseecom
+    chown system drmrpc /dev/qseecom
+    chmod 0664 /dev/ion
+    chown system system /dev/ion
+    install_keyring
+
+on init
+    start vendor.qseecomd
+
+service vendor.qseecomd /vendor/bin/qseecomd
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service gatekeeper-1-0-qti /vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qti
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service keymaster-4-0-qti /vendor/bin/hw/android.hardware.keymaster@4.0-service-qti
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service keymaster-4-1-qti /vendor/bin/hw/android.hardware.keymaster@4.1-service-qti
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service vibratorfeature-hal-service /vendor/bin/hw/vendor.xiaomi.hardware.vibratorfeature.service
+    class hal
+    user system
+    group system input
+    seclabel u:r:recovery:s0
+
+on boot
+    write /sys/class/leds/vibrator/trigger transient
+    chown system system /sys/class/leds/vibrator/trigger
+    chown system system /sys/class/leds/vibrator/activate
+    chown system system /sys/class/leds/vibrator/brightness
+    chown system system /sys/class/leds/vibrator/duration
+    chown system system /sys/class/leds/vibrator/state
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/2-005a/f0_save
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/2-005a/osc_save
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/3-005a/osc_save
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/2-005a/custom_wave
+    chmod 0666  /sys/bus/i2c/drivers/aw8697_haptic/2-005a/custom_wave
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/2-005a/custom_wave
+    chmod 0666  /sys/bus/i2c/drivers/aw8697_haptic/2-005a/custom_wave
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/3-005a/custom_wave
+    chmod 0666  /sys/bus/i2c/drivers/aw8697_haptic/3-005a/custom_wave
+    chmod 0666 /sys/class/qcom-haptics/lra_calibration
+    chown system system /sys/bus/i2c/drivers/aw8697_haptic/0-005a/custom_wave
+    chmod 0666  /sys/bus/i2c/drivers/aw8697_haptic/0-005a/custom_wave
+    chmod 0666 /sys/class/qcom-haptics/lra_impedance
+    chown system system /sys/bus/i2c/drivers/awinic_haptic/3-005a/f0_save
+    chown system system /sys/bus/i2c/drivers/awinic_haptic/3-005a/osc_save
+    chown system system /sys/bus/i2c/drivers/awinic_haptic/3-005a/custom_wave
+    chmod 0666  /sys/bus/i2c/drivers/awinic_haptic/3-005a/custom_wave
+
+    setprop sys.usb.config adb
+    start health-hal-2-1
+    start vibratorfeature-hal-service
+
+on property:vendor.sys.listeners.registered=true
+    start keymaster-4-0-qti
+    start keymaster-4-1-qti
+    start gatekeeper-1-0-qti
+
+on property:twrp.super.symlinks_created=true
+    start patchfstab
+
+service patchfstab /system/bin/patchfstab.sh
+    user root
+    group root
+    disabled
+    oneshot
+    seclabel u:r:recovery:s0
