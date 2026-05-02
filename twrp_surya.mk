@@ -16,7 +16,7 @@ $(call inherit-product, vendor/omni/config/common.mk)
 $(call inherit-product, device/xiaomi/surya/device.mk)
 
 PRODUCT_DEVICE := surya
-PRODUCT_NAME := omni_surya
+PRODUCT_NAME := twrp_surya
 PRODUCT_BRAND := POCO
 PRODUCT_MODEL := M2007J20CG
 PRODUCT_MANUFACTURER := xiaomi
