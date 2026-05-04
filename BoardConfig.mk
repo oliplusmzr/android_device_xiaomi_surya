@@ -97,3 +97,21 @@ TW_EXTRA_LANGUAGES := true
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_USE_TOOLBOX := true
+TW_CUSTOM_BATTERY_PATH := "/sys/class/power_supply/battery"
+TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone9/temp"
+
+# Screen Conf
+TW_FRAMERATE := 75
+
+# F2FS
+TW_INCLUDE_F2FS := true
+
+# FBE
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
+BOARD_USES_METADATA_PARTITION := true
+BOARD_USES_QCOM_FBE_DECRYPTION := true
+TW_PREPARE_DATA_MEDIA_EARLY := true
+
+
